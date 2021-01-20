@@ -24,14 +24,9 @@ def add_task(name):
         return False
 
     tasks[name] = False
-    if not os.path.exists(TASKS_DIR):
-        os.makedirs(TASKS_DIR)
-
-    with open(TASKS_FILEPATH, "w") as f:
-        json.dump(tasks, f, indent=4)
-        logging.info("La tâche a bien été ajoutée.")
-
+    _write_tasks_to_disk(tasks=tasks, message="La tâche a bien été ajoutée.")
     return True
+
 
 def remove_task(name):
     tasks = get_tasks()
@@ -39,15 +34,18 @@ def remove_task(name):
         logging.error("La tâche n'existe pas dans le dictionnaire.")
         return False
     del tasks[name]
-
-    if not os.path.exists(TASKS_DIR):
-        os.makedirs(TASKS_DIR)
-
-    with open(TASKS_FILEPATH, "w") as f:
-        json.dump(tasks, f, indent=4)
-        logging.info("La tâche a bien été supprimée.")
+    _write_tasks_to_disk(tasks=tasks, message="La tâche a bien été supprimée.")
     return True
 
+
+def _write_tasks_to_disk(tasks, message):
+    if not os.path.exists(TASKS_DIR):
+        os.makedirs(TASKS_DIR)
+    with open(TASKS_FILEPATH, "w") as f:
+        json.dump(tasks, f, indent=4)
+        logging.info(message)
+
+
 if __name__ == '__main__':
-    t = remove_task("Apprendre Python")
+    t = add_task("Apprendre Python")
     print(t)
