@@ -17,5 +17,22 @@ def get_tasks():
     return {}
 
 
+def add_task(name):
+    tasks = get_tasks()
+    if name in tasks.keys():
+        logging.error("Une tâche avec le même nom existe déjà.")
+        return False
+
+    tasks[name] = False
+    if not os.path.exists(TASKS_DIR):
+        os.makedirs(TASKS_DIR)
+
+    with open(TASKS_FILEPATH, "w") as f:
+        json.dump(tasks, f, indent=1)
+        logging.info("La tâche a bien été ajoutée.")
+
+    return True
+
+
 if __name__ == '__main__':
     t = get_tasks()
