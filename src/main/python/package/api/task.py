@@ -37,6 +37,16 @@ def remove_task(name):
     _write_tasks_to_disk(tasks=tasks, message="La tâche a bien été supprimée.")
     return True
 
+def set_tasks_statut(name, done=True):
+    tasks = get_tasks()
+    if name not in tasks.keys():
+        logging.error("La tâche n'existe pas dans le dictionnaire.")
+        return False
+
+    tasks[name] = done
+    _write_tasks_to_disk(tasks=tasks, message="La tâche a bien été mise à jour.")
+    return True
+
 
 def _write_tasks_to_disk(tasks, message):
     if not os.path.exists(TASKS_DIR):
@@ -47,5 +57,15 @@ def _write_tasks_to_disk(tasks, message):
 
 
 if __name__ == '__main__':
-    t = add_task("Apprendre Python")
+    t = remove_task("Apprendre Python")
     print(t)
+    t = add_task("Apprendre Python")
+    t = add_task("Apprendre Python3")
+    print(t)
+    t = set_tasks_statut("Apprendre Python")
+    print(t)
+    t = remove_task("Apprendre Pytho3")
+    print(t)
+    t = remove_task("Apprendre Python3")
+    print(t)
+
