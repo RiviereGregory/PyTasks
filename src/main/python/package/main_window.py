@@ -1,5 +1,7 @@
 from PySide2 import QtWidgets
 
+import package.api.task
+
 
 class MainWindow(QtWidgets.QWidget):
     def __init__(self, ctx):
@@ -38,4 +40,12 @@ class MainWindow(QtWidgets.QWidget):
         self.layout_buttons.addWidget(self.btn_quit)
 
     def setup_connections(self):
-        pass
+        self.btn_add.clicked.connect(self.add_task)
+
+    def add_task(self):
+        task_name, ok = QtWidgets.QInputDialog.getText(self,
+                                                       "Ajouter une tâche",
+                                                       "Nom de la tâche:")
+        if ok and task_name:
+            package.api.task.add_task(name=task_name)
+            self.lw_tasks.addItem(task_name)
