@@ -25,6 +25,11 @@ class TaskItem(QtWidgets.QListWidgetItem):
     def set_background_color(self):
         color = COLORS.get(self.done)
         self.setBackgroundColor(QtGui.QColor(*color))
+        color_str = ", ".join(map(str, color))
+        # Ajout css
+        stylesheet = f"""QListView::item:selected {{background: rgb({color_str});
+                                                    color: rgb(0, 0, 0);}}"""
+        self.list_widget.setStyleSheet(stylesheet)
 
 
 class MainWindow(QtWidgets.QWidget):
@@ -67,7 +72,6 @@ class MainWindow(QtWidgets.QWidget):
     def setup_connections(self):
         self.btn_add.clicked.connect(self.add_task)
         self.lw_tasks.itemClicked.connect(lambda lw_item: lw_item.toggle_state())
-
 
     def add_task(self):
         task_name, ok = QtWidgets.QInputDialog.getText(self,
