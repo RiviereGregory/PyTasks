@@ -71,6 +71,7 @@ class MainWindow(QtWidgets.QWidget):
 
     def setup_connections(self):
         self.btn_add.clicked.connect(self.add_task)
+        self.btn_clean.clicked.connect(self.clean_task)
         self.lw_tasks.itemClicked.connect(lambda lw_item: lw_item.toggle_state())
 
     def add_task(self):
@@ -80,6 +81,15 @@ class MainWindow(QtWidgets.QWidget):
         if ok and task_name:
             package.api.task.add_task(name=task_name)
             self.get_task()
+
+    def clean_task(self):
+        for i in range(self.lw_tasks.count()):
+            lw_item = self.lw_tasks.item(i)
+            if lw_item.done:
+                package.api.task.remove_task(name=lw_item.name)
+
+        self.get_task()
+        self.lw_tasks.repaint()
 
     def get_task(self):
         self.lw_tasks.clear()
