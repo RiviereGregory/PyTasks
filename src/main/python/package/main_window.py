@@ -1,4 +1,5 @@
 import package.api.task
+import platform
 from PySide2 import QtWidgets, QtCore, QtGui
 
 COLORS = {False: (235, 64, 52), True: (160, 237, 83)}
@@ -39,10 +40,12 @@ class MainWindow(QtWidgets.QWidget):
         self.setWindowTitle("PyTasks")
         self.setup_ui()
         self.get_task()
+        self.center_under_tray()
 
     def setup_ui(self):
         self.create_widgets()
         self.create_layouts()
+        self.create_tray_icon()
         self.modify_widgets()
         self.add_widgets_to_layouts()
         self.setup_connections()
@@ -52,6 +55,12 @@ class MainWindow(QtWidgets.QWidget):
         self.btn_add = QtWidgets.QPushButton()
         self.btn_clean = QtWidgets.QPushButton()
         self.btn_quit = QtWidgets.QPushButton()
+
+    def create_tray_icon(self):
+        self.tray = QtWidgets.QSystemTrayIcon()
+        icon_path = self.ctx.get_resource("icon.png")
+        self.tray.setIcon(QtGui.QIcon(icon_path))
+        self.tray.setVisible(True)
 
     def modify_widgets(self):
         self.main_layout.setContentsMargins(0, 0, 0, 0)
@@ -88,6 +97,7 @@ class MainWindow(QtWidgets.QWidget):
         self.btn_clean.clicked.connect(self.clean_task)
         self.btn_quit.clicked.connect(self.close)
         self.lw_tasks.itemClicked.connect(lambda lw_item: lw_item.toggle_state())
+        self.tray.activated.connect(self.tray_icon_click)
 
     def add_task(self):
         task_name, ok = QtWidgets.QInputDialog.getText(self,
@@ -111,3 +121,19 @@ class MainWindow(QtWidgets.QWidget):
         tasks = package.api.task.get_tasks()
         for task_name, done in tasks.items():
             TaskItem(name=task_name, done=done, list_widget=self.lw_tasks)
+
+    def tray_icon_click(self, reason):
+        if self.isHidden():
+            self.showNormal()
+            self.center_under_tray()
+        else:
+            self.hide()
+
+    def center_under_tray(self):
+        tray_x = self.tray.geometry().x()
+        tray_y = self.tray.geometry().y()
+        w, h = self.sizeHint().toTuple()
+        if platform.system() == "Windows":
+            self.move(tray_x - w, tray_y-350)
+        else:
+            self.move(tray_x - (w / 2), 25)
