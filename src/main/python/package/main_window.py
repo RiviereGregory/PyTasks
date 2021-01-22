@@ -49,12 +49,26 @@ class MainWindow(QtWidgets.QWidget):
 
     def create_widgets(self):
         self.lw_tasks = QtWidgets.QListWidget()
-        self.btn_add = QtWidgets.QPushButton("Add")
-        self.btn_clean = QtWidgets.QPushButton("Clean")
-        self.btn_quit = QtWidgets.QPushButton("Quit")
+        self.btn_add = QtWidgets.QPushButton()
+        self.btn_clean = QtWidgets.QPushButton()
+        self.btn_quit = QtWidgets.QPushButton()
 
     def modify_widgets(self):
-        pass
+        self.main_layout.setContentsMargins(0, 0, 0, 0)
+        self.main_layout.setSpacing(0)
+        self.setStyleSheet("border: none;")
+        self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowStaysOnTopHint)
+
+        self.btn_add.setIcon(QtGui.QIcon(self.ctx.get_resource("add.svg")))
+        self.btn_quit.setIcon(QtGui.QIcon(self.ctx.get_resource("close.svg")))
+        self.btn_clean.setIcon(QtGui.QIcon(self.ctx.get_resource("clean.svg")))
+
+        self.btn_add.setFixedSize(36, 36)
+        self.btn_clean.setFixedSize(36, 36)
+        self.btn_quit.setFixedSize(36, 36)
+
+        self.lw_tasks.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.lw_tasks.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
 
     def create_layouts(self):
         self.main_layout = QtWidgets.QVBoxLayout(self)
@@ -72,6 +86,7 @@ class MainWindow(QtWidgets.QWidget):
     def setup_connections(self):
         self.btn_add.clicked.connect(self.add_task)
         self.btn_clean.clicked.connect(self.clean_task)
+        self.btn_quit.clicked.connect(self.close)
         self.lw_tasks.itemClicked.connect(lambda lw_item: lw_item.toggle_state())
 
     def add_task(self):
