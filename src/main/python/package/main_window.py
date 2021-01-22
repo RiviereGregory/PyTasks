@@ -3,6 +3,7 @@ from PySide2 import QtWidgets, QtCore, QtGui
 
 COLORS = {False: (235, 64, 52), True: (160, 237, 83)}
 
+
 class TaskItem(QtWidgets.QListWidgetItem):
     def __init__(self, name, done, list_widget):
         super().__init__(name)
@@ -14,6 +15,11 @@ class TaskItem(QtWidgets.QListWidgetItem):
         self.setSizeHint(QtCore.QSize(self.sizeHint().width(), 50))
 
         self.list_widget.addItem(self)
+        self.set_background_color()
+
+    def toggle_state(self):
+        self.done = not self.done
+        package.api.task.set_tasks_statut(name=self.name, done=self.done)
         self.set_background_color()
 
     def set_background_color(self):
@@ -60,6 +66,8 @@ class MainWindow(QtWidgets.QWidget):
 
     def setup_connections(self):
         self.btn_add.clicked.connect(self.add_task)
+        self.lw_tasks.itemClicked.connect(lambda lw_item: lw_item.toggle_state())
+
 
     def add_task(self):
         task_name, ok = QtWidgets.QInputDialog.getText(self,
