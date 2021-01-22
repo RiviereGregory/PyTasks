@@ -9,6 +9,7 @@ class MainWindow(QtWidgets.QWidget):
         self.ctx = ctx
         self.setWindowTitle("PyTasks")
         self.setup_ui()
+        self.get_task()
 
     def setup_ui(self):
         self.create_widgets()
@@ -48,4 +49,10 @@ class MainWindow(QtWidgets.QWidget):
                                                        "Nom de la tâche:")
         if ok and task_name:
             package.api.task.add_task(name=task_name)
+            self.get_task()
+
+    def get_task(self):
+        self.lw_tasks.clear()
+        tasks = package.api.task.get_tasks()
+        for task_name, done in tasks.items():
             self.lw_tasks.addItem(task_name)
