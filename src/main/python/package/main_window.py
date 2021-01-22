@@ -1,6 +1,24 @@
-from PySide2 import QtWidgets
-
 import package.api.task
+from PySide2 import QtWidgets, QtCore, QtGui
+
+COLORS = {False: (235, 64, 52), True: (160, 237, 83)}
+
+class TaskItem(QtWidgets.QListWidgetItem):
+    def __init__(self, name, done, list_widget):
+        super().__init__(name)
+
+        self.list_widget = list_widget
+        self.done = done
+        self.name = name
+
+        self.setSizeHint(QtCore.QSize(self.sizeHint().width(), 50))
+
+        self.list_widget.addItem(self)
+        self.set_background_color()
+
+    def set_background_color(self):
+        color = COLORS.get(self.done)
+        self.setBackgroundColor(QtGui.QColor(*color))
 
 
 class MainWindow(QtWidgets.QWidget):
@@ -55,4 +73,4 @@ class MainWindow(QtWidgets.QWidget):
         self.lw_tasks.clear()
         tasks = package.api.task.get_tasks()
         for task_name, done in tasks.items():
-            self.lw_tasks.addItem(task_name)
+            TaskItem(name=task_name, done=done, list_widget=self.lw_tasks)
